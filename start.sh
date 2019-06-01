@@ -1,0 +1,1 @@
+npm start > wechartBot.log 2>&1 &

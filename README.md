@@ -45,8 +45,8 @@ yarn
     // 配置文件
     module.exports ={
       // 基础定时发送功能配置项（必填项）
-      NAME:'A兔子',//备注姓名
-      NICKNAME:'嗯哼', //昵称
+      NAME:'A兔子',//姓名
+      ALIAS:'嗯哼', //备注姓名
       MEMORIAL_DAY:'2015/04/18', //你和收信者的纪念日
       CITY:'shanghai',//收信者所在城市
       LOCATION:'pudong-new-district',//收信者所在区 （可以访问墨迹天气网站后，查询区的英文拼写）

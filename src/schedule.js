@@ -1,7 +1,7 @@
 const schedule = require('node-schedule')
 // date 参数
 
-//其他规则见 https://www.npmjs.com/package/node-schedule
+// 其他规则见 https://www.npmjs.com/package/node-schedule
 // 规则参数讲解    *代表通配符
 //
 // *  *  *  *  *  *

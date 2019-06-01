@@ -2,14 +2,17 @@
 module.exports = {
   // 基础定时发送功能配置项（必填项）
   NAME: '萍踪侠影',//备注姓名
-  NICKNAME: '萍踪侠影', //昵称
+  ALIAS: '萍踪侠影', //昵称
+  SENDDATE: '56 59 * * * *',//定时发送时间
+  // NAME: '镜风',//备注姓名
+  // ALIAS: '镜风', //昵称
+  // SENDDATE: '30 * * * * *',//定时发送时间
   MEMORIAL_DAY: '2018/10/7', //你和收信者的纪念日
   CITY: 'hebei',//收信者所在城市
   LOCATION: 'langfang',//收信者所在区 （可以访问墨迹天气网站后，查询区的英文拼写）
-  SENDDATE: '30 * * * * *',//定时发送时间 每天8点0分0秒发送，规则见 /schedule/index.js
   ONE: 'http://wufazhuce.com/',////ONE的web版网站
+  HAHA: 'https://www.qiushibaike.com',//笑话网站
   MOJI_HOST: 'https://tianqi.moji.com/weather/china/', //中国墨迹天气url
-
 
   //高级功能配置项（非必填项）
   AUTOADDFRIEND: false,//自动加好友功能  默认关闭
