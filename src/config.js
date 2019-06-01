@@ -7,7 +7,7 @@ module.exports = {
   // NAME: '镜风',//备注姓名
   // ALIAS: '镜风', //昵称
   // SENDDATE: '30 * * * * *',//定时发送时间
-  MEMORIAL_DAY: '2018/10/7', //你和收信者的纪念日
+  MEMORIAL_DAY: '2018-10-07', //你和收信者的纪念日
   CITY: 'hebei',//收信者所在城市
   LOCATION: 'langfang',//收信者所在区 （可以访问墨迹天气网站后，查询区的英文拼写）
   ONE: 'http://wufazhuce.com/',////ONE的web版网站
