@@ -1,6 +1,10 @@
-const config = require('./config')
-const cheerio = require('cheerio')
-const superagent = require('superagent')
+const _ = require('lodash');
+const moment = require('moment');
+const cheerio = require('cheerio');
+const xml2js = require('xml2js').parseString;
+const superagent = require('superagent');
+
+const config = require('./config');
 
 //请求
 function superReq(url, method, params, data, cookies) {
@@ -46,6 +50,30 @@ async function getHaha() { // 获取笑话
   }
 }
 
+async function getNews() {
+  try {
+    const res = await superReq(`${config.NEWS}`, 'GET');
+    const json = await new Promise((resolve, reject) => xml2js(res.text, (err, ret) => {
+      !err ? resolve(ret) : reject(err);
+    }));
+    const news = _.get(json, ['rss', 'channel', 0, 'item'], {});
+    const newsTemp = _.template('<%=num%>. <%=title%> @ <%=time%>');
+    const pickNews = (i) => {
+      const item = _.get(news, i, {});
+      return newsTemp({
+        num: i + 1 + '',
+        time: moment(_.get(item, ['pubDate', 0])).tz('Asia/Shanghai').format('MM-DD h:mm a'),
+        title: _.get(item, 'title', '-- Sorry, an empty news --')
+      });
+    };
+    const content = _.join(_.map(_.range(5), (o) => pickNews(o)), '<br><br>');
+    return `[CNN News]<br>${content}`;
+  } catch (ex) {
+    console.log(ex);
+    return '';
+  }
+}
+
 async function getWeather() { //获取墨迹天气
   try {
     let url = config.MOJI_HOST + config.CITY + '/' + config.LOCATION
@@ -84,6 +112,7 @@ async function getReply(word) { // 青云api，智能聊天机器人
 module.exports = {
   getOne,
   getHaha,
+  getNews,
   getWeather,
   getReply,
 }

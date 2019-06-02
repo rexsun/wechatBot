@@ -8,7 +8,7 @@ function getDayNum(date) {
 
 function formatDate(date) {
     const now = !date ? moment() : moment(date);
-    const bjTime = now.tz(targetTimeZone).format('YYYY-MM-DD h:mm:ss a');
+    const bjTime = now.tz(targetTimeZone).format('YYYY-MM-DD h:mm a');
     return bjTime;
 }
 

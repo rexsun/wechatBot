@@ -6,12 +6,13 @@ module.exports = {
   SENDDATE: '56 59 * * * *',//定时发送时间
   // NAME: '镜风',//备注姓名
   // ALIAS: '镜风', //昵称
-  // SENDDATE: '30 * * * * *',//定时发送时间
+  // SENDDATE: '*/30 * * * * *',//定时发送时间
   MEMORIAL_DAY: '2018-10-07', //你和收信者的纪念日
   CITY: 'hebei',//收信者所在城市
   LOCATION: 'langfang',//收信者所在区 （可以访问墨迹天气网站后，查询区的英文拼写）
   ONE: 'http://wufazhuce.com/',////ONE的web版网站
   HAHA: 'https://www.qiushibaike.com',//笑话网站
+  NEWS: 'http://rss.cnn.com/rss/cnn_latest.rss',//新闻网站
   MOJI_HOST: 'https://tianqi.moji.com/weather/china/', //中国墨迹天气url
 
   //高级功能配置项（非必填项）

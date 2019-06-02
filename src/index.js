@@ -39,14 +39,15 @@ function onLogout(user) {
 async function timerMessage() {
 	let logMsg;
 	let contact = await bot.Contact.find({ name: config.NAME }) || await bot.Contact.find({ alias: config.ALIAS }); // 获取你要发送的联系人
-	let haha = await superagent.getHaha(); //获取每日一句
+//	let haha = await superagent.getHaha(); //获取每日一句
+	let news = await superagent.getNews();
 	let weather = await superagent.getWeather(); //获取天气信息
 	let nowTime = await utils.formatDate(); //获取今天的日期
 	let dayNumber = utils.getDayNum(config.MEMORIAL_DAY); //获取纪念日天数
 	let message = `现在是${nowTime}
 亲爱的，今天是我们的第${dayNumber}天<br>
 ${weather}<br>
-${haha}<br>————想念你的Rex`;
+${news}<br>————思念你的Rex`;
 	try {
 		logMsg = message;
 		await contact.say(message); // 发送消息
