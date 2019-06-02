@@ -1,19 +1,88 @@
 // 配置文件
 module.exports = {
-  // 基础定时发送功能配置项（必填项）
-  NAME: '萍踪侠影',//备注姓名
-  ALIAS: '萍踪侠影', //昵称
-  SENDDATE: '59 59 * * * *',//定时发送时间
-  // NAME: '镜风',//备注姓名
-  // ALIAS: '镜风', //昵称
-  // SENDDATE: '*/30 * * * * *',//定时发送时间
-  MEMORIAL_DAY: '2018-10-07', //你和收信者的纪念日
-  CITY: 'hebei',//收信者所在城市
-  LOCATION: 'langfang',//收信者所在区 （可以访问墨迹天气网站后，查询区的英文拼写）
+  TIMER_MESSAGER: [
+    {
+      ENABLED: 1,
+      NAME: '萍踪侠影',
+      ALIAS: '萍踪侠影',
+      CRON: '59 59 * * * *',
+      CHANNELS: {
+        nowTime: {
+          template: '现在时刻<%=content%>',
+          timeZone: 'Asia/Shanghai',
+        },
+        countDay: {
+          template: '亲爱的，今天是我们的第<%=content%>天<br>',
+          from: '2018-10-07',
+          timeZone: 'Asia/Shanghai',
+        },
+        weatherMoji: {
+          template: '[天气预报]<br><%=content%><br>',
+          url: 'https://tianqi.moji.com/weather/china/hebei/langfang',
+        },
+        newsCnn: {
+          template: '[CNN News]<br><%=content%><br>',
+          timeZone: 'Asia/Shanghai',
+          count: 5,
+        },
+        footer: '————思念你的Rex',
+      },
+    }, {
+      ENABLED: 0,
+      NAME: '镜风',
+      ALIAS: '镜风',
+      CRON: '*/30 * * * * *',
+      CHANNELS: {
+        nowTime: {
+          template: '现在时刻<%=content%>',
+          timeZone: 'Asia/Shanghai',
+        },
+        countDay: {
+          template: '亲爱的，今天是我们的第<%=content%>天<br>',
+          from: '2018-10-07',
+          timeZone: 'Asia/Shanghai',
+        },
+        weatherMoji: {
+          template: '[天气预报]<br><%=content%><br>',
+          url: 'https://tianqi.moji.com/weather/china/shanghai/pudong-new-district',
+        },
+        newsCnn: {
+          template: '[CNN News]<br><%=content%><br>',
+          timeZone: 'Asia/Shanghai',
+          count: 5,
+        },
+        footer: '————思念你的Rex',
+      },
+    }, {
+      ENABLED: 0,
+      NAME: 'SUNSEA',
+      ALIAS: 'SUNSEA',
+      CRON: '*/30 * * * * *',
+      CHANNELS: {
+        nowTime: {
+          template: '现在时刻<%=content%>',
+          timeZone: 'Asia/Los_Angeles',
+        },
+        countDay: {
+          template: '我们相识的第<%=content%>天<br>',
+          from: '2015-03-14',
+          timeZone: 'Asia/Los_Angeles',
+        },
+        weatherMoji: {
+          template: '[天气预报]<br><%=content%><br>',
+          url: 'https://tianqi.moji.com/weather/china/shanghai/pudong-new-district',
+        },
+        dailySaying: {
+          template: '[今日金句]<br><%=content%><br>',
+        },
+        footer: '————Rex的微信小管家',
+      },
+    }
+  ],
+
   ONE: 'http://wufazhuce.com/',////ONE的web版网站
   HAHA: 'https://www.qiushibaike.com',//笑话网站
   NEWS: 'http://rss.cnn.com/rss/cnn_latest.rss',//新闻网站
-  MOJI_HOST: 'https://tianqi.moji.com/weather/china/', //中国墨迹天气url
 
   //高级功能配置项（非必填项）
   AUTOADDFRIEND: false,//自动加好友功能  默认关闭

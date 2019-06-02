@@ -1,16 +1,28 @@
 /**
  * WechatBot
- *  - https://github.com/gengchen528/wechatBot
+ *  - original https://github.com/gengchen528/wechatBot
+ *  - modified https://github.com/rexsun/wechatBot
  */
 const _ = require('lodash');
 const { Wechaty, Friendship } = require('wechaty');
-const schedule = require('./schedule');
-const utils = require('./utils');
-const config = require('./config');
-const superagent = require('./superagent');
 const { FileBox } = require('file-box'); //文件读取模块
+const schedule = require('node-schedule');
 
-//  二维码生成
+// See details: https://www.npmjs.com/package/node-schedule
+// s m H d M w
+// * * * * * *
+// ┬ ┬ ┬ ┬ ┬ ┬
+// │ │ │ │ │ │
+// │ │ │ │ │ └ day of week (0 - 7) (0 or 7 is Sun)
+// │ │ │ │ └───── month (1 - 12)
+// │ │ │ └────────── day of month (1 - 31)
+// │ │ └─────────────── hour (0 - 23)
+// │ └──────────────────── minute (0 - 59)
+// └───────────────────────── second (0 - 59, OPTIONAL)
+
+const config = require('./config');
+const channels = require('./channels');
+
 function onScan(qrcode, status) {
 	require('qrcode-terminal').generate(qrcode);  // 在console端显示二维码
 	const qrcodeImageUrl = [
@@ -20,47 +32,67 @@ function onScan(qrcode, status) {
 	console.log(qrcodeImageUrl);
 }
 
-// 登录
 async function onLogin(user) {
 	console.log(`---- ${user} logged in ----`);
-	// 登陆后创建定时任务
-	schedule.setSchedule(config.SENDDATE, () => {
-		console.log('==== Starting scheduled task ====');
-		timerMessage();
-	});
+	setTimers();
 }
 
-//登出
 function onLogout(user) {
 	console.log(`---- ${user} logged out ----`);
 }
 
-// 自动发消息功能
-async function timerMessage() {
-	let logMsg;
-	let contact = await bot.Contact.find({ name: config.NAME }) || await bot.Contact.find({ alias: config.ALIAS }); // 获取你要发送的联系人
-//	let haha = await superagent.getHaha(); //获取每日一句
-	let news = await superagent.getNews();
-	let weather = await superagent.getWeather(); //获取天气信息
-	let nowTime = await utils.formatDate(); //获取今天的日期
-	let dayNumber = utils.getDayNum(config.MEMORIAL_DAY); //获取纪念日天数
-	let message = `现在是${nowTime}
-亲爱的，今天是我们的第${dayNumber}天<br>
-${weather}<br>
-${news}<br>————思念你的Rex`;
-	try {
-		logMsg = message;
-		await contact.say(message); // 发送消息
-	} catch (e) {
-		logMsg = e.message;
+function setTimers() {
+	_.each(config.TIMER_MESSAGER, (params) => {
+		if(!!_.get(params, 'ENABLED', false)) {
+			schedule.scheduleJob(params.CRON, () => {
+				sendMessage(params);
+			});
+			console.log(`scheduled: ${params.NAME}(${params.ALIAS} - ${params.CRON})`);
+		}
+	});
+}
+
+async function sendMessage(params) {
+	console.log(`==== Starting scheduled task ${params.NAME}(${params.ALIAS}) ====`);
+
+	const contact = await bot.Contact.find({ name: params.NAME })
+	 || await bot.Contact.find({ alias: params.ALIAS });
+	if (!contact) {
+		console.log(`!!!! Contact ${params.NAME}(${params.ALIAS}) not found, SKIP message !!!!`);
+		return;
 	}
-	console.log(logMsg);
+	
+	const message = await channels.getChannelMessages(params.CHANNELS);
+
+	try {
+		await contact.say(message);
+		console.log(message);
+	} catch (ex) {
+		console.log('sendMessage ERROR:: ', ex);
+	}
+}
+
+function formatMessage(text) {
+	let result = text;
+	
+	try {
+		if (_.startsWith(text, '&lt;')) {
+			result = _.unescape(text);
+		}
+		// switch (true) {
+		// 	case _.startsWith(text, '&lt;'):
+		// 		break;
+		// }
+	} catch (ignored) {
+	}
+
+	return result;
 }
 
 // 监听对话 根据关键词自动加群
 async function onMessage(msg) {
 	const contact = msg.from(); // 发消息人
-	const content = utils.formatMessage(msg.text()); //消息内容
+	const content = formatMessage(msg.text()); //消息内容
 	const room = msg.room(); //是否是群消息
 	const roomCodeUrl = FileBox.fromUrl(config.ROOMCODEURL); //来自url的文件
 	const roomCodeLocal = FileBox.fromFile(config.ROOMLOCALPATH); //添加本地文件
@@ -71,9 +103,9 @@ async function onMessage(msg) {
 
 	if (room) { // 如果是群消息
 		const topic = await room.topic();
-		console.log(`==>[ ${topic} | ${contact.name()} ] ==> ${content}`);
+		console.log(`>>R>> [ ${topic} | ${contact.name()} ] ==> ${content}`);
 	} else { // 如果非群消息
-		console.log(`==>( ${contact.name()} ) ==> ${content}`);
+		console.log(`>>C>> ( ${contact.name()} ) ==> ${content}`);
 		if (config.AUTOADDROOM) { //判断是否开启自动加群功能
 			let addRoomReg = eval(config.ADDROOMWORD);
 			let roomReg = eval(config.ROOMNAME);
@@ -90,7 +122,7 @@ async function onMessage(msg) {
 				}
 			} else {
 				if (config.AUTOREPLY) { // 如果开启自动聊天
-					let reply = await superagent.getReply(content)
+					let reply = await channels.getReply(content)
 					console.log('图灵机器人回复：', reply)
 					try {
 						await contact.say(reply)
@@ -101,7 +133,7 @@ async function onMessage(msg) {
 			}
 		} else {
 			if (config.AUTOREPLY) { // 如果开启自动聊天
-				let reply = await superagent.getReply(content)
+				let reply = await channels.getReply(content)
 				console.log('图灵机器人回复：', reply)
 				try {
 					await contact.say(reply)
@@ -176,5 +208,5 @@ const bot = ((b) => {
 		.then(() => console.log('---- START ----'))
 		.catch(e => console.error(e));
 
-	return b;	
+	return b;
 })(new Wechaty({ name: 'WechatEveryDay' }));
