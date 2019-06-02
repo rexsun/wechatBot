@@ -1,1 +1,1 @@
-kill -9 $(ps aux | grep 'node index.js' | awk '{print $2}')
+kill -9 $(ps aux | grep 'node src/index.js' | awk '{print $2}')
