@@ -54,19 +54,36 @@ module.exports = {
         footer: '————思念你的Rex',
       },
     }, {
-      ENABLED: 0,
-      NAME: 'SUNSEA',
-      ALIAS: 'SUNSEA',
-      CRON: '*/30 * * * * *',
+      ENABLED: 1,
+      ROOM: 'SUNSEA',
+      CRON: '0 */10 * * * *',
       CHANNELS: {
         nowTime: {
           template: '现在时刻<%=content%>',
-          timeZone: 'Asia/Los_Angeles',
+          timeZone: 'America/Los_Angeles',
         },
         countDay: {
           template: '我们相识的第<%=content%>天<br>',
           from: '2015-03-14',
-          timeZone: 'Asia/Los_Angeles',
+          timeZone: 'America/Los_Angeles',
+        },
+        weatherMoji: {
+          template: '[天气预报]<br><%=content%><br>',
+          url: 'https://tianqi.moji.com/weather/china/shanghai/pudong-new-district',
+        },
+        hahaQiubai: {
+          template: '[开心一刻]<br><%=content%>',
+        },
+        footer: '————Rex的微信小管家',
+      },
+    }, {
+      ENABLED: 1,
+      ROOM: 'SUN',
+      CRON: '0 0 22 * * *',
+      CHANNELS: {
+        nowTime: {
+          template: '现在时刻<%=content%>',
+          timeZone: 'Asia/Shanghai',
         },
         weatherMoji: {
           template: '[天气预报]<br><%=content%><br>',
@@ -75,7 +92,7 @@ module.exports = {
         dailySaying: {
           template: '[今日金句]<br><%=content%><br>',
         },
-        footer: '————Rex的微信小管家',
+        footer: '————孙家的微信小管家',
       },
     }
   ],

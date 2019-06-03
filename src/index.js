@@ -48,28 +48,49 @@ function setTimers() {
 			schedule.scheduleJob(params.CRON, () => {
 				sendMessage(params);
 			});
-			console.log(`scheduled: ${params.NAME}(${params.ALIAS} - ${params.CRON})`);
+			const target = !params.ROOM ? `${params.NAME}(${params.ALIAS})`
+			 : `ROOM [${params.ROOM}]`;
+			console.log(`scheduled: ${target} - ${params.CRON}`);
 		}
 	});
 }
 
 async function sendMessage(params) {
-	console.log(`==== Starting scheduled task ${params.NAME}(${params.ALIAS}) ====`);
+	if (!params.ROOM) {
+		console.log(`==== Starting scheduled task ${params.NAME}(${params.ALIAS}) ====`);
 
-	const contact = await bot.Contact.find({ name: params.NAME })
-		|| await bot.Contact.find({ alias: params.ALIAS });
-	if (!contact) {
-		console.log(`!!!! Contact ${params.NAME}(${params.ALIAS}) not found, SKIP message !!!!`);
-		return;
-	}
+		const contact = await bot.Contact.find({ name: params.NAME })
+			|| await bot.Contact.find({ alias: params.ALIAS });
+		if (!contact) {
+			console.log(`!!!! Contact ${params.NAME}(${params.ALIAS}) not found, SKIP message !!!!`);
+			return;
+		}
 
-	const message = await channels.getChannelMessages(params.CHANNELS);
+		const message = await channels.getChannelMessages(params.CHANNELS);
 
-	try {
-		await contact.say(message);
-		console.log(message);
-	} catch (ex) {
-		console.log('sendMessage ERROR:: ', ex);
+		try {
+			await contact.say(message);
+			console.log(message);
+		} catch (ex) {
+			console.log('sendMessage ERROR:: ', ex);
+		}
+	} else {
+		console.log(`==== Starting scheduled task ROOM [${params.ROOM}] ====`);
+		const room = await bot.Room.find({topic: params.ROOM});
+
+		if (!room) {
+			console.log(`!!!! ROOM [${params.ROOM})] not found, SKIP message !!!!`);
+			return;
+		}
+
+		const message = await channels.getChannelMessages(params.CHANNELS);
+
+		try {
+			await room.say(message);
+			console.log(message);
+		} catch (ex) {
+			console.log('sendMessage ERROR:: ', ex);
+		}
 	}
 }
 
@@ -99,8 +120,8 @@ ${_.get(msgJson, 'desc', '')}
 ${_.get(msgJson, 'url', '')}
 ${_.get(json, ['msg', 'appinfo', 'appname'], '')}`;
 						break;
-					case !!_.get(json, 'emoji'):
-						result = `[[ 表情 ]] ${_.get(json, ['emoji', '$', 'cdnurl'], '')}`;
+					case !!_.get(json, ['msg', 'emoji']):
+						result = `[[ 表情 ]] ${_.get(json, ['msg', 'emoji', '$', 'cdnurl'], '')}`;
 						break;
 				}
 				break;
