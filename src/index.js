@@ -73,7 +73,7 @@ async function sendMessage(params) {
 	}
 }
 
-function formatMessage(text) {
+async function formatMessage(text) {
 	let result = text;
 
 	try {
@@ -114,7 +114,7 @@ ${_.get(json, ['msg', 'appinfo', 'appname'], '')}`;
 // 监听对话 根据关键词自动加群
 async function onMessage(msg) {
 	const contact = msg.from(); // 发消息人
-	const content = formatMessage(msg.text()); //消息内容
+	const content = await formatMessage(msg.text()); //消息内容
 	const room = msg.room(); //是否是群消息
 	const roomCodeUrl = FileBox.fromUrl(config.ROOMCODEURL); //来自url的文件
 	const roomCodeLocal = FileBox.fromFile(config.ROOMLOCALPATH); //添加本地文件
