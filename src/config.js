@@ -29,8 +29,8 @@ module.exports = {
       },
     }, {
       ENABLED: 0,
-      NAME: '镜风',
-      ALIAS: '镜风',
+      NAME: 'RexSun',
+      ALIAS: 'RexSun',
       CRON: '*/30 * * * * *',
       CHANNELS: {
         nowTime: {
@@ -79,7 +79,7 @@ module.exports = {
     }, {
       ENABLED: 1,
       ROOM: 'SUN',
-      CRON: '0 0 22 * * *',
+      CRON: '0 0 16 * * *',
       CHANNELS: {
         nowTime: {
           template: '现在时刻<%=content%>',

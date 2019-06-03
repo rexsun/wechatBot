@@ -100,25 +100,29 @@ async function formatMessage(text) {
 	try {
 		if (_.startsWith(text, '&lt;')) {
 			result = _.unescape(text);
+			result = _.replace(result, /[ ]+/img, ' ');
+			result = _.replace(result, /<br[/]?>/img, '');
+			result = _.replace(result, '<?xml version="1.0"?>', '');
 		}
 		switch (true) {
 			case !!(/^@[a-f0-9]+$/img.test(result)):
 				result = '[[ 图片 ]]';
 				break;
-			case _.startsWith(result, '<msg>'):
+			case _.startsWith(result, '<msg'):
 				const json = await new Promise((resolve, reject) => xml2js(result, (err, ret) => {
 					!err ? resolve(ret) : reject(err);
 				}));
 
-				const msgJson = _.get(json, ['msg', 'appmsg'], {});
+				const msgJson = _.get(json, ['msg', 'appmsg', 0], 
+					_.get(json, ['msg', 'appmsg'], {}));
 
 				switch (true) {
 					case !!_.get(msgJson, 'url'):
 						result = `[[ 链接 ]]
 ${_.get(msgJson, 'title', '')}
-${_.get(msgJson, 'desc', '')}
+${_.get(msgJson, 'des', '')}
 ${_.get(msgJson, 'url', '')}
-${_.get(json, ['msg', 'appinfo', 'appname'], '')}`;
+${_.get(json, ['msg', 'appinfo', 0, 'appname'], _.get(msgJson, 'sourcedisplayname', ''))}`;
 						break;
 					case !!_.get(json, ['msg', 'emoji']):
 						result = `[[ 表情 ]] ${_.get(json, ['msg', 'emoji', '$', 'cdnurl'], '')}`;
