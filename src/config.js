@@ -5,7 +5,7 @@ module.exports = {
       ENABLED: 1,
       NAME: '萍踪侠影',
       ALIAS: '萍踪侠影',
-      CRON: '59 59 * * * *',
+      CRON: '0 0 * * * *',
       CHANNELS: {
         nowTime: {
           template: '现在时刻<%=content%>',
@@ -38,7 +38,7 @@ module.exports = {
           timeZone: 'Asia/Shanghai',
         },
         countDay: {
-          template: '亲爱的，今天是我们的第<%=content%>天<br>',
+          template: '第<%=content%>天<br>',
           from: '2018-10-07',
           timeZone: 'Asia/Shanghai',
         },

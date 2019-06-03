@@ -6,6 +6,7 @@
 const _ = require('lodash');
 const { Wechaty, Friendship } = require('wechaty');
 const { FileBox } = require('file-box'); //文件读取模块
+const xml2js = require('xml2js').parseString;
 const schedule = require('node-schedule');
 
 // See details: https://www.npmjs.com/package/node-schedule
@@ -43,7 +44,7 @@ function onLogout(user) {
 
 function setTimers() {
 	_.each(config.TIMER_MESSAGER, (params) => {
-		if(!!_.get(params, 'ENABLED', false)) {
+		if (!!_.get(params, 'ENABLED', false)) {
 			schedule.scheduleJob(params.CRON, () => {
 				sendMessage(params);
 			});
@@ -56,12 +57,12 @@ async function sendMessage(params) {
 	console.log(`==== Starting scheduled task ${params.NAME}(${params.ALIAS}) ====`);
 
 	const contact = await bot.Contact.find({ name: params.NAME })
-	 || await bot.Contact.find({ alias: params.ALIAS });
+		|| await bot.Contact.find({ alias: params.ALIAS });
 	if (!contact) {
 		console.log(`!!!! Contact ${params.NAME}(${params.ALIAS}) not found, SKIP message !!!!`);
 		return;
 	}
-	
+
 	const message = await channels.getChannelMessages(params.CHANNELS);
 
 	try {
@@ -74,15 +75,36 @@ async function sendMessage(params) {
 
 function formatMessage(text) {
 	let result = text;
-	
+
 	try {
 		if (_.startsWith(text, '&lt;')) {
 			result = _.unescape(text);
 		}
-		// switch (true) {
-		// 	case _.startsWith(text, '&lt;'):
-		// 		break;
-		// }
+		switch (true) {
+			case !!(/^@[a-f0-9]+$/img.test(result)):
+				result = '[[ 图片 ]]';
+				break;
+			case _.startsWith(result, '<msg>'):
+				const json = await new Promise((resolve, reject) => xml2js(result, (err, ret) => {
+					!err ? resolve(ret) : reject(err);
+				}));
+
+				const msgJson = _.get(json, ['msg', 'appmsg'], {});
+
+				switch (true) {
+					case !!_.get(msgJson, 'url'):
+						result = `[[ 链接 ]]
+${_.get(msgJson, 'title', '')}
+${_.get(msgJson, 'desc', '')}
+${_.get(msgJson, 'url', '')}
+${_.get(json, ['msg', 'appinfo', 'appname'], '')}`;
+						break;
+					case !!_.get(json, 'emoji'):
+						result = `[[ 表情 ]] ${_.get(json, ['emoji', '$', 'cdnurl'], '')}`;
+						break;
+				}
+				break;
+		}
 	} catch (ignored) {
 	}
 
