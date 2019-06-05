@@ -23,12 +23,12 @@ module.exports = {
         newsCnn: {
           template: '[CNN News]<br><%=content%><br>',
           timeZone: 'Asia/Shanghai',
-          count: 5,
+          count: 3,
         },
         footer: '————思念你的Rex',
       },
     }, {
-      ENABLED: 0,
+      ENABLED: 1,
       NAME: 'RexSun',
       ALIAS: 'RexSun',
       CRON: '*/30 * * * * *',
@@ -49,14 +49,14 @@ module.exports = {
         newsCnn: {
           template: '[CNN News]<br><%=content%><br>',
           timeZone: 'Asia/Shanghai',
-          count: 5,
+          count: 3,
         },
         footer: '————思念你的Rex',
       },
     }, {
       ENABLED: 1,
       ROOM: 'SUNSEA',
-      CRON: '0 */10 * * * *',
+      CRON: '0 */30 * * * *',
       CHANNELS: {
         nowTime: {
           template: '现在时刻<%=content%>',
@@ -64,7 +64,7 @@ module.exports = {
         },
         countDay: {
           template: '我们相识的第<%=content%>天<br>',
-          from: '2015-03-14',
+          from: '2005-03-14',
           timeZone: 'America/Los_Angeles',
         },
         weatherMoji: {

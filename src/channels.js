@@ -68,12 +68,15 @@ async function newsCnn(params) {
       !err ? resolve(ret) : reject(err);
     }));
     const news = _.get(json, ['rss', 'channel', 0, 'item'], {});
-    const newsTemp = _.template('<%=num%>. <%=title%> @ <%=time%>');
+    const newsTemp = _.template('<%=num%>. <%=title%> -- <%=body%> @ <%=time%>');
     const pickNews = (i) => {
       const item = _.get(news, i, {});
+      const body = _.get(item, ['description', 0], 
+        _.get(item, 'description', '<div'));
       return newsTemp({
         num: i + 1 + '',
         time: moment(_.get(item, ['pubDate', 0])).tz(timeZone).format('MM-DD h:mm a'),
+        body: body.substring(0, body.indexOf('<div')),
         title: _.get(item, 'title', '-- Sorry, an empty news --')
       });
     };
